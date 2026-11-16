@@ -12,9 +12,10 @@ function Header({ cartCount = 0 }) {
 
         <nav className="header-nav">
           <Link to="/">Inicio</Link>
-          <span className="cart-indicator">
+
+          <Link to="/carrito" className="cart-indicator">
             Carrito ({cartCount})
-          </span>
+          </Link>
         </nav>
       </div>
     </header>

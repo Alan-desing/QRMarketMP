@@ -1,15 +1,27 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "./components/Header.jsx";
 import CatalogPage from "./pages/CatalogPage.jsx";
 import ProductPage from "./pages/ProductPage.jsx";
+import CartPage from "./pages/CartPage.jsx";
 import "./styles/global.css";
 import "./styles/catalog.css";
 import "./styles/product.css";
+import "./styles/cart.css";
 
 function App() {
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("cart") || "[]");
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cartItems));
+  }, [cartItems]);
 
   function addToCart(product, quantity) {
     setCartItems((currentItems) => {
@@ -31,8 +43,30 @@ function App() {
         );
       }
 
-      return [...currentItems, { ...product, quantity }];
+      return [
+        ...currentItems,
+        { ...product, quantity }
+      ];
     });
+  }
+
+  function updateQuantity(productId, quantity) {
+    setCartItems((currentItems) =>
+      currentItems.map((item) =>
+        item.id === productId
+          ? {
+              ...item,
+              quantity: Math.max(1, Math.min(item.stock, quantity))
+            }
+          : item
+      )
+    );
+  }
+
+  function removeFromCart(productId) {
+    setCartItems((currentItems) =>
+      currentItems.filter((item) => item.id !== productId)
+    );
   }
 
   const cartCount = cartItems.reduce(
@@ -50,6 +84,17 @@ function App() {
         <Route
           path="/productos/:id"
           element={<ProductPage onAddToCart={addToCart} />}
+        />
+
+        <Route
+          path="/carrito"
+          element={
+            <CartPage
+              cartItems={cartItems}
+              onUpdateQuantity={updateQuantity}
+              onRemove={removeFromCart}
+            />
+          }
         />
       </Routes>
 
