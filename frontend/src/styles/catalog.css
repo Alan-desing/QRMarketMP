@@ -1,0 +1,155 @@
+
+.catalog-hero {
+  background: linear-gradient(120deg, #1458bd, #2486ed);
+  color: white;
+  padding: 55px 45px;
+  border-radius: 16px;
+  margin-bottom: 45px;
+}
+
+.hero-label {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.17);
+  padding: 7px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.catalog-hero h1 {
+  font-size: clamp(28px, 4vw, 42px);
+  margin-bottom: 12px;
+}
+
+.catalog-hero p {
+  color: #e4efff;
+  font-size: 15px;
+}
+
+.catalog-section {
+  margin-top: 15px;
+}
+
+.section-heading {
+  margin-bottom: 25px;
+}
+
+.section-heading h2 {
+  font-size: 25px;
+  margin-bottom: 7px;
+}
+
+.section-heading p {
+  color: #7b8493;
+  font-size: 14px;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.product-card {
+  background: #ffffff;
+  border: 1px solid #e8ebf1;
+  border-radius: 13px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(20, 40, 80, 0.08);
+}
+
+.product-image-link {
+  display: block;
+  overflow: hidden;
+}
+
+.product-image {
+  width: 100%;
+  height: 205px;
+  object-fit: cover;
+  display: block;
+}
+
+.product-card-content {
+  padding: 19px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 11px;
+}
+
+.product-category {
+  color: #1769e0;
+  background: #edf4ff;
+  padding: 5px 9px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.product-name {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.product-name:hover {
+  color: #1769e0;
+}
+
+.product-price {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.stock-status {
+  color: #198754;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.stock-status.out {
+  color: #dc3545;
+}
+
+.product-link {
+  width: 100%;
+  text-align: center;
+  padding: 11px;
+  background: #edf4ff;
+  color: #1769e0;
+  border-radius: 7px;
+  font-weight: 700;
+  font-size: 13px;
+  margin-top: 5px;
+  transition: background 0.2s;
+}
+
+.product-link:hover {
+  background: #dceaff;
+}
+
+@media (max-width: 850px) {
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 550px) {
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .catalog-hero {
+    padding: 35px 24px;
+  }
+
+  .header-content {
+    padding: 15px;
+  }
+}
