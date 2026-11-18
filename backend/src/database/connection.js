@@ -44,6 +44,13 @@ db.exec(`
     FOREIGN KEY (order_id) REFERENCES orders(id)
       ON DELETE CASCADE
   );
+
+    CREATE TABLE IF NOT EXISTS users (
+    id TEXT PRIMARY KEY,
+    username TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  );
 `);
 
 export default db;

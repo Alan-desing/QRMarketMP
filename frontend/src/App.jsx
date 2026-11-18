@@ -9,6 +9,11 @@ import "./styles/global.css";
 import "./styles/catalog.css";
 import "./styles/product.css";
 import "./styles/cart.css";
+import LoginPage from "./pages/LoginPage.jsx";
+import DashboardPage from "./pages/DashboardPage.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import "./styles/login.css";
+import "./styles/dashboard.css";
 
 function App() {
   const [cartItems, setCartItems] = useState(() => {
@@ -94,6 +99,16 @@ function App() {
               onUpdateQuantity={updateQuantity}
               onRemove={removeFromCart}
             />
+          }
+        />
+        <Route path="/vendedor/login" element={<LoginPage />} />
+
+        <Route
+          path="/vendedor/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
           }
         />
       </Routes>

@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 
 function Header({ cartCount = 0 }) {
@@ -15,6 +14,10 @@ function Header({ cartCount = 0 }) {
 
           <Link to="/carrito" className="cart-indicator">
             Carrito ({cartCount})
+          </Link>
+
+          <Link to="/vendedor/login">
+            Vendedor
           </Link>
         </nav>
       </div>

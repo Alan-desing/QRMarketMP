@@ -129,3 +129,27 @@ export function updateOrderMpStatus(id, mpStatus) {
 
   return result.changes > 0 ? getOrderById(id) : null;
 }
+
+export function getAllOrders() {
+  const orders = db.prepare(`
+    SELECT *
+    FROM orders
+    ORDER BY created_at DESC
+  `).all();
+
+  const getItems = db.prepare(`
+    SELECT
+      product_id AS productId,
+      product_name AS productName,
+      unit_price AS unitPrice,
+      quantity,
+      line_total AS lineTotal
+    FROM order_items
+    WHERE order_id = ?
+  `);
+
+  return orders.map((order) => ({
+    ...order,
+    items: getItems.all(order.id)
+  }));
+}
