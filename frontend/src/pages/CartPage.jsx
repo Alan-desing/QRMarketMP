@@ -5,6 +5,11 @@ import {
   validateCoupon,
   calculateShipping
 } from "../services/purchaseService.js";
+import {
+  createOrder,
+  startOrderPayment,
+  getOrderPaymentQrUrl
+} from "../services/orderService.js";
 
 function CartPage({ cartItems, onUpdateQuantity, onRemove }) {
   const [couponCode, setCouponCode] = useState("");
@@ -15,6 +20,10 @@ function CartPage({ cartItems, onUpdateQuantity, onRemove }) {
   const [shippingError, setShippingError] = useState("");
   const [loadingCoupon, setLoadingCoupon] = useState(false);
   const [loadingShipping, setLoadingShipping] = useState(false);
+  const [loadingPayment, setLoadingPayment] = useState(false);
+  const [paymentError, setPaymentError] = useState("");
+  const [orderId, setOrderId] = useState(null);
+  const [checkoutUrl, setCheckoutUrl] = useState("");
 
   const subtotal = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -65,6 +74,42 @@ function CartPage({ cartItems, onUpdateQuantity, onRemove }) {
       setLoadingShipping(false);
     }
   }
+
+  async function handlePay() {
+    if (!postalCode.trim()) {
+        setPaymentError("Ingresá tu código postal y calculá el envío antes de pagar.");
+        return;
+    }
+
+    setLoadingPayment(true);
+    setPaymentError("");
+
+    try {
+        let currentOrderId = orderId;
+
+        if (!currentOrderId) {
+        const order = await createOrder({
+            items: cartItems.map((item) => ({
+            productId: item.id,
+            quantity: item.quantity
+            })),
+            couponCode: coupon ? couponCode.trim() : null,
+            postalCode: postalCode.trim()
+        });
+
+        currentOrderId = order.id;
+        setOrderId(currentOrderId);
+        }
+
+        const payment = await startOrderPayment(currentOrderId);
+
+        setCheckoutUrl(payment.checkoutUrl);
+    } catch (error) {
+        setPaymentError(error.message);
+    } finally {
+        setLoadingPayment(false);
+    }
+    }
 
   function formatPrice(price) {
     return price.toLocaleString("es-AR", {
@@ -241,9 +286,37 @@ function CartPage({ cartItems, onUpdateQuantity, onRemove }) {
             <strong>{formatPrice(total)}</strong>
           </div>
 
-          <p className="checkout-notice">
-            El proceso de pago se habilitará en el siguiente grupo.
-          </p>
+          <button
+            className="cart-primary-button"
+            onClick={handlePay}
+            disabled={loadingPayment || Boolean(checkoutUrl)}
+            >
+            {loadingPayment ? "Preparando pago..." : "Pagar"}
+            </button>
+
+            {paymentError && (
+            <p className="form-error">{paymentError}</p>
+            )}
+
+            {checkoutUrl && (
+            <div className="payment-qr">
+                <h3>Escaneá el código QR para pagar</h3>
+
+                <img
+                src={getOrderPaymentQrUrl(orderId)}
+                alt="Código QR para realizar el pago"
+                />
+
+                <a
+                href={checkoutUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cart-primary-button"
+                >
+                Abrir Mercado Pago
+                </a>
+            </div>
+            )}
         </aside>
       </div>
     </main>
