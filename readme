@@ -1,0 +1,242 @@
+# QRMarketMP
+
+Sistema de comercio electrónico que permite consultar productos, administrar un carrito de compras, aplicar descuentos, calcular envíos y realizar pagos mediante Mercado Pago utilizando códigos QR.
+
+El proyecto fue desarrollado como trabajo práctico con el objetivo de integrar tecnologías web, almacenamiento de datos, servicios externos y autenticación de usuarios.
+
+## Tecnologías utilizadas
+
+### Frontend
+- React
+- Vite
+- React Router DOM
+- JavaScript
+- CSS
+
+### Backend
+- Node.js
+- Express
+- SQLite
+- Better-SQLite3
+- Mercado Pago
+- QRCode
+- JWT
+- BcryptJS
+
+## Funcionalidades
+
+### Compras
+- Visualización del catálogo de productos.
+- Consulta de detalles de cada producto.
+- Generación de códigos QR para los productos.
+- Agregado y eliminación de productos del carrito.
+- Modificación de cantidades.
+- Cálculo del subtotal de la compra.
+
+### Descuentos y envíos
+- Validación de cupones de descuento.
+- Aplicación de descuentos al total.
+- Cálculo del costo de envío según el código postal.
+- Aplicación de envío gratuito cuando se cumplen las condiciones establecidas.
+
+### Pagos
+- Creación y almacenamiento de pedidos.
+- Integración con Mercado Pago.
+- Generación de órdenes de pago.
+- Generación de códigos QR asociados al enlace de pago.
+- Recepción de notificaciones mediante webhooks.
+- Actualización del estado de los pedidos según las notificaciones recibidas.
+
+### Administración
+- Inicio de sesión de vendedores.
+- Autenticación mediante JWT.
+- Protección de las rutas del panel administrativo.
+- Visualización de productos y pedidos.
+- Consulta de estadísticas de ventas e ingresos.
+- Cierre de sesión.
+
+## Estructura del proyecto
+
+```text
+QRMarketMP/
+│
+├── backend/
+│   ├── src/
+│   │   ├── controllers/
+│   │   ├── database/
+│   │   ├── middlewares/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   └── server.js
+│   │
+│   └── package.json
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   │
+│   └── package.json
+│
+└── README.md
+```
+
+## Requisitos previos
+
+Para ejecutar el proyecto se necesita:
+
+- Node.js.
+- pnpm.
+- Una cuenta de Mercado Pago.
+- Un Access Token de Mercado Pago.
+
+## Instalación
+
+Clonar el repositorio:
+
+```bash
+git clone <URL_DEL_REPOSITORIO>
+```
+
+Ingresar a la carpeta del proyecto:
+
+```bash
+cd QRMarketMP
+```
+
+### Backend
+
+Ingresar a la carpeta:
+
+```bash
+cd backend
+```
+
+Instalar las dependencias:
+
+```bash
+pnpm install
+```
+
+Configurar las variables de entorno utilizando el archivo `.env.example` como referencia. Crear un archivo `.env` en la carpeta `backend` y completar los valores necesarios.
+
+Entre las configuraciones se encuentran:
+
+- Puerto del servidor.
+- Access Token de Mercado Pago.
+- Secreto para validar los webhooks.
+- URL del frontend.
+- Clave secreta para JWT.
+
+Iniciar el servidor:
+
+```bash
+pnpm exec node src/server.js
+```
+
+El backend estará disponible en:
+
+```text
+http://localhost:3000
+```
+
+### Frontend
+
+Abrir otra terminal e ingresar a la carpeta:
+
+```bash
+cd QRMarketMP/frontend
+```
+
+Instalar las dependencias:
+
+```bash
+pnpm install
+```
+
+Iniciar el servidor de desarrollo:
+
+```bash
+pnpm dev
+```
+
+El frontend estará disponible en:
+
+```text
+http://localhost:5173
+```
+
+## API del backend
+
+Las principales rutas disponibles son:
+
+| Método | Endpoint | Descripción |
+|---|---|---|
+| GET | `/api/products` | Obtener todos los productos |
+| GET | `/api/products/:id` | Obtener un producto |
+| GET | `/api/products/:id/qr` | Generar QR de un producto |
+| POST | `/api/purchase/coupons/validate` | Validar un cupón |
+| POST | `/api/purchase/shipping/calculate` | Calcular el envío |
+| POST | `/api/orders` | Crear un pedido |
+| GET | `/api/orders/:id` | Consultar un pedido |
+| POST | `/api/orders/:id/payment` | Iniciar el pago |
+| GET | `/api/orders/:id/payment/qr` | Obtener el QR de pago |
+| POST | `/api/webhooks/mercadopago` | Recibir notificaciones de Mercado Pago |
+| POST | `/api/auth/register` | Registrar un vendedor |
+| POST | `/api/auth/login` | Iniciar sesión |
+| GET | `/api/auth/me` | Consultar el vendedor autenticado |
+| GET | `/api/dashboard` | Obtener los datos del panel administrativo |
+
+Las rutas administrativas requieren autenticación mediante un token JWT.
+
+## Base de datos
+
+El proyecto utiliza SQLite para almacenar la información de los pedidos y los vendedores.
+
+Las tablas principales son:
+
+- `orders`: almacena los pedidos, sus importes y estados de pago.
+- `order_items`: almacena los productos y cantidades correspondientes a cada pedido.
+- `users`: almacena los vendedores registrados y sus contraseñas cifradas.
+
+La conexión y creación de las tablas se gestionan desde el backend.
+
+## Integración con Mercado Pago
+
+El sistema utiliza Mercado Pago para generar órdenes de pago.
+
+El proceso general es:
+
+1. El cliente agrega productos al carrito.
+2. Completa los datos necesarios para calcular el envío.
+3. El sistema crea el pedido y lo almacena en SQLite.
+4. Se solicita a Mercado Pago la creación de una orden de pago.
+5. Se obtiene el enlace de pago.
+6. El backend genera un código QR asociado a ese enlace.
+7. El cliente puede escanear el QR o abrir el enlace de Mercado Pago.
+8. Mercado Pago envía notificaciones al sistema mediante webhooks.
+9. El backend valida las notificaciones y actualiza el estado del pedido.
+
+Para utilizar esta integración es necesario configurar correctamente las credenciales de Mercado Pago y la URL de notificaciones.
+
+## Seguridad
+
+El proyecto incorpora:
+
+- Contraseñas de vendedores cifradas mediante BcryptJS.
+- Autenticación con tokens JWT.
+- Middleware para proteger las rutas administrativas.
+- Validaciones de datos en el backend.
+- Validación de firmas de las notificaciones de Mercado Pago.
+- Variables de entorno para almacenar información sensible.
+
+**Importante:** no se debe subir el archivo `.env` al repositorio ni compartir las credenciales de Mercado Pago o las claves secretas.
+
+## Objetivo del proyecto
+
+QRMarketMP busca desarrollar una plataforma de comercio electrónico que integre un catálogo de productos, un carrito de compras y un sistema de pagos mediante códigos QR.
+
+Además, incorpora un panel para vendedores que permite consultar los productos, los pedidos y la información relacionada con las ventas desde una misma aplicación.
